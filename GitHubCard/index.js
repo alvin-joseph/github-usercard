@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
@@ -27,8 +29,85 @@
     Using that array, iterate over it, requesting data for each user, creating a new card for each
     user, and adding that card to the DOM.
 */
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell'];
 
-const followersArray = [];
+const cards = document.querySelector('.cards');
+
+followersArray.forEach((profileUrl) => {
+  const url = `https://api.github.com/users/${profileUrl}`;
+  axios
+  .get(url)
+  .then(res => {
+    const userData = res.data
+    const fullData = userCardMaker(userData);
+    cards.appendChild(fullData);
+  })
+  .catch(err => {
+    console.log('err')
+  })
+  .finally(() => {
+    console.log('done');
+  })
+})
+
+
+axios
+.get('https://api.github.com/users/alvin-joseph')
+.then(res => {
+  const userData = res.data
+  const fullData = userCardMaker(userData);
+  cards.appendChild(fullData);
+})
+.catch(err => {
+  console.log(err);
+})
+.finally(() => {
+  console.log('done');
+});
+
+
+function userCardMaker(userObj) {
+  //instantiating the elements
+  const card = document.createElement('div');
+  const cardImg = document.createElement('img');
+  const info = document.createElement('div');
+  const name = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const address = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+  // setting class names, attributes and text
+  card.classList.add('card');
+  info.classList.add('card-info');
+  name.classList.add('name');
+  name.textContent = userObj.name
+  username.classList.add('username');
+  username.textContent = userObj.login;
+  cardImg.src = userObj.avatar_url;
+  location.textContent = `Location: ${userObj.location}`;
+  profile.textContent = 'Profile: ';
+  address.href = userObj.html_url;
+  address.textContent = userObj.html_url;
+  followers.textContent = `Followers: ${userObj.followers}`;
+  following.textContent = `Following: ${userObj.following}`;
+  bio.textContent = `Bio: ${userObj.bio}`;
+  // creating the hierarchy
+  card.appendChild(cardImg);
+  card.appendChild(info);
+  info.appendChild(name);
+  info.appendChild(username);
+  info.appendChild(location);
+  info.appendChild(profile);
+  profile.appendChild(address);
+  info.appendChild(followers);
+  info.appendChild(following);
+  info.appendChild(bio);
+  //return 
+  return card;
+}
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
